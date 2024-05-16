@@ -1,0 +1,27 @@
+{
+	"id": "72ed0b57-203f-4d6b-8514-956800248f8b",
+	"values": [
+		{
+			"key": "mail",
+			"value": "sysadmin@qacoders.com",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "password",
+			"value": "1234@Test",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "msgloginSuccess",
+			"value": "Olá Qa-Coders-SYSADMIN, autenticação autorizada com sucesso!",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"name": "Globals",
+	"_postman_variable_scope": "globals",
+	"_postman_exported_at": "2024-05-16T17:48:46.069Z",
+	"_postman_exported_using": "Postman/11.1.2"
+}

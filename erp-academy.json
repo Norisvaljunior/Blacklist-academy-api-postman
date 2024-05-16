@@ -1,0 +1,1697 @@
+{
+	"info": {
+		"_postman_id": "608d8f0d-d3cf-4733-9999-e4e546ea1fa6",
+		"name": "Academy ERP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17398978",
+		"_collection_link": "https://universal-water-535592.postman.co/workspace/Teste-QaCoders~a7df6bd9-1283-4b37-b6fd-f73dc8be302f/collection/17398978-608d8f0d-d3cf-4733-9999-e4e546ea1fa6?action=share&source=collection_link&creator=17398978"
+	},
+	"item": [
+		{
+			"name": "Login Admin com sucesso",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate msg success is true\", function() {\r",
+							"     pm.expect(pm.globals.get(\"msgloginSuccess\")).to.eql(JSON.parse(responseBody).msg)\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate token\", function(){\r",
+							"    pm.expect(JSON.parse(responseBody).token).exist\r",
+							"})\r",
+							"\r",
+							"pm.environment.set('tokenAdmin',pm.response.json().token);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"mail\": \"{{mail}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Autenticação admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\" , function () { pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/validateToken",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"validateToken"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cadastro usuario com sucesso",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//function gerarMassaDeDados(tamanho) {\r",
+							"//    const massa = [];\r",
+							"//    for (let i = 0; i < tamanho; i++) {\r",
+							"//        const numeroAleatorio = Math.floor(Math.random() * 100000000000); // Números de 0 a 9999999999\r",
+							"//        massa.push(numeroAleatorio);\r",
+							"//    }\r",
+							"//    return massa;\r",
+							"//}\r",
+							"//const minhaMassaDeDados = gerarMassaDeDados(1);\r",
+							"//pm.environment.set('CPF' , minhaMassaDeDados);\r",
+							"//\r",
+							"//const novoValor = pm.environment.get('CPF') + 1;\r",
+							"//pm.environment.set('CPF', novoValor);\r",
+							"\r",
+							"const requestOptions = {\r",
+							"    url: `${pm.variables.get(\"url\")}/api/login`,\r",
+							"    method: 'POST',\r",
+							"    header: {\r",
+							"        'accept': 'application/json',\r",
+							"        'Content-Type': 'application/json'\r",
+							"    },\r",
+							"    body: {\r",
+							"        mode: 'raw',\r",
+							"        raw: JSON.stringify({\r",
+							"            mail: \"sysadmin@qacoders.com\",\r",
+							"            password: \"1234@Test\"\r",
+							"        })\r",
+							"    }\r",
+							"};\r",
+							" \r",
+							"function gerarCPF() {\r",
+							"    let num = Math.floor(Math.random() * 999999999);\r",
+							"    let cpf = num.toString().padStart(9, '0');\r",
+							"    cpf += calcularDigito(cpf);\r",
+							"    cpf += calcularDigito(cpf);\r",
+							" \r",
+							"    return cpf;\r",
+							"}\r",
+							" \r",
+							"function calcularDigito(cpf) {\r",
+							"    let soma = 0;\r",
+							"    for (let i = 0; i < cpf.length; i++) {\r",
+							"        soma += parseInt(cpf[i]) * ((cpf.length + 1) - i);\r",
+							"    }\r",
+							"    let resto = (soma * 10) % 11;\r",
+							"    return (resto > 9) ? '0' : resto.toString();\r",
+							"}\r",
+							" \r",
+							"// Definir a variável no Postman\r",
+							"pm.environment.set(\"CPF\", gerarCPF());\r",
+							"\r",
+							"pm.environment.set(\"EMAILUSER\", pm.variables.replaceIn('{{$guid}}')+\"@qacoders.com.br\")\r",
+							"\r",
+							"pm.environment.set(\"FULLNAME\", pm.variables.replaceIn(\"{{$randomFullName}}\"));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"pm.environment.set('usuarioId' , pm.response.json().user._id);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"fullName\": \"{{FULLNAME}}\",\r\n    \"mail\": \"{{EMAILUSER}}\",\r\n    \"password\": \"123456@Teste\",\r\n    \"accessProfile\": \"ADMIN\",\r\n    \"cpf\": \"{{CPF}}\",\r\n    \"confirmPassword\": \"123456@Teste\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/user",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Consulta de usuario",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\" , function () { pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/user",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login User com sucesso",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\" , function () { pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.environment.set('tokenuser',pm.response.json().token);\r",
+							"\r",
+							"pm.test(\"Check is token exist\", function(){})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"mail\": \"{{EMAILUSER}}\",\r\n    \"password\": \"123456@Teste\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cadastro usuario Senha sem letra maiuscula",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\" , function () { pm.response.to.have.status(400);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"fullName\": \"{{FULLNAME}}\",\r\n    \"mail\": \"{{EMAILUSER}}\",\r\n    \"password\": \"1234@test\",\r\n    \"accessProfile\": \"ADMIN\",\r\n    \"cpf\": \"{{CPF}}\",\r\n    \"confirmPassword\": \"1234@test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/user",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cadastro usuario nome maior que 100 caracteres",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\" , function () { pm.response.to.have.status(400);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"fullName\": \"Aaaaaaaaaaaaaaaaaaaaa Bbbbbbbbbbbbbbbb Ccccccccccccccccccc Dddddddddddddddddd Eeeeeeeeeeeeeeeeeeeeeee\",\r\n    \"mail\": \"{{EMAILUSER}}\",\r\n    \"password\": \"1234@Test\",\r\n    \"accessProfile\": \"ADMIN\",\r\n    \"cpf\": \"{{CPF}}\",\r\n    \"confirmPassword\": \"1234@Test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/user",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cadastro usuario nome com numeros",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\" , function () { pm.response.to.have.status(400);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"fullName\": \"123 123\",\r\n    \"mail\": \"{{EMAILUSER}}\",\r\n    \"password\": \"1234@Test\",\r\n    \"accessProfile\": \"ADMIN\",\r\n    \"cpf\": \"{{CPF}}\",\r\n    \"confirmPassword\": \"1234@Test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/user",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cadastro usuario nome sem palavras compostas",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\" , function () { pm.response.to.have.status(400);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"fullName\": \"T\",\r\n    \"mail\": \"{{EMAILUSER}}\",\r\n    \"password\": \"1234@Test\",\r\n    \"accessProfile\": \"ADMIN\",\r\n    \"cpf\": \"{{CPF}}\",\r\n    \"confirmPassword\": \"1234@Test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/user",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cadastro usuario Contagem de Usuario",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\" , function () { pm.response.to.have.status(200);\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/user/count",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"user",
+						"count"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cadastro usuario Mostrar um usuario",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\" , function () { pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/user/{{usuarioId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"user",
+						"{{usuarioId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cadastro usuario Edicao de dados Senha",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\" , function () { pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenuser}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"password\": \"Teste@123456\",\r\n    \"confirmPassword\": \"Teste@123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/user/password/{{usuarioId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"user",
+						"password",
+						"{{usuarioId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cadastro usuario Edicao de dados Confirmar Senha",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\" , function () { pm.response.to.have.status(400);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenuser}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"password\": \"12345@Black1\",\r\n    \"confirmPassword\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/user/password/{{usuarioId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"user",
+						"password",
+						"{{usuarioId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cadastro usuario Edicao de dados Status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\" , function () { pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"status\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/user/status/{{usuarioId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"user",
+						"status",
+						"{{usuarioId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cadastro usuario Deletar registro do banco com sucesso",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\" , function () { pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/user/{{usuarioId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"user",
+						"{{usuarioId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lista board",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\" , function () { pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/board",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"board"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cadastrar board com sucesso",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"pm.environment.set('diretoriaId',pm.response.json().newBoard._id);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.environment.set(\"nomeDIRETORIA\", \"Diretoria \" + pm.variables.replaceIn(\"{{$randomJobArea}}\"));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"boardName\": \"{{nomeDIRETORIA}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/board",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"board"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Contagem board",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\" , function () { pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verificar contagem de cadastros\", function () {\r",
+							"    var responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson.count).to.be.above(0); // Verifica se o total de usuários é maior que zero\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/board/count",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"board",
+						"count"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lista board cadastrada",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\" , function () { pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/board/{{diretoriaId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"board",
+						"{{diretoriaId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Atualização dados da board",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\" , function () { pm.response.to.have.status(201);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"boardName\": \"{{nomeDIRETORIA}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/board/{{diretoriaId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"board",
+						"{{diretoriaId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lista costCenter",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\" , function () { pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/costCenter",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"costCenter"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Incluir costCenter",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\" , function () { pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.environment.set('costcenterId' , pm.response.json().newCostCenter._id);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"nomeCCUSTO\", \"Centro Custo \" + pm.variables.replaceIn(\"{{$randomJobArea}}\"));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"costCenterName\": \"{{nomeCCUSTO}}\",\r\n  \"boardId\": \"{{diretoriaId}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/costCenter/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"costCenter",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Contagem costCenter",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\" , function () { pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verificar contagem de cadastros\", function () {\r",
+							"    var responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson.count).to.be.above(0); // Verifica se o total de usuários é maior que zero\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/costCenter/count",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"costCenter",
+						"count"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lista costCenter cadastrado",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\" , function () { pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/costCenter/{{costcenterId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"costCenter",
+						"{{costcenterId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lista Departamento",
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/department",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"department"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Funcional Incluir Departamento",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\" , function () { pm.response.to.have.status(201);\r",
+							"})\r",
+							"pm.environment.set('departamentoId' , pm.response.json().newDepartment._id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"NOMEDPTO\", \"Blacklist \" + pm.variables.replaceIn(\"{{$randomFirstName}}\"));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"departmentName\": \"{{NOMEDPTO}}\",\r\n  \"costCenterId\": \"{{costcenterId}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/department",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"department"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lista Departamento",
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/department/{{departamentoId}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"department",
+						"{{departamentoId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Consulta company",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\" , function () { pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/company",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"company"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cadastro company com sucesso",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"RAZAOSOCIAL\", \"Companhia Black \" + pm.variables.replaceIn(\"{{$randomFirstName}}\"));\r",
+							"\r",
+							"function gerarMassaDeDados(tamanho) {\r",
+							"    const massa = [];\r",
+							"    for (let i = 0; i < tamanho; i++) {\r",
+							"        const numeroAleatorio = Math.floor(Math.random() * 10000000000000); // Números de 0 a 9999999999\r",
+							"        massa.push(numeroAleatorio);\r",
+							"    }\r",
+							"    return massa;\r",
+							"}\r",
+							"const minhaMassaDeDados = gerarMassaDeDados(1);\r",
+							"pm.environment.set('CNPJ' , minhaMassaDeDados);\r",
+							"\r",
+							"const novoValor = pm.environment.get('CNPJ') + 1;\r",
+							"pm.environment.set('CNPJ', novoValor);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.environment.set('companyId' , pm.response.json().newCompany._id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{tokenAdmin}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"corporateName\": \"{{RAZAOSOCIAL}}\",\r\n  \"registerCompany\": \"{{CNPJ}}\",\r\n  \"mail\": \"test@test.com\",\r\n  \"matriz\": \"Blacklist\",\r\n  \"responsibleContact\": \"Norisval\",\r\n  \"telephone\": \"99999999999999\",\r\n  \"serviceDescription\": \"Testes\",\r\n  \"address\": [\r\n    {\r\n      \"zipCode\": \"04777001\",\r\n      \"city\": \"Navegantes\",\r\n      \"state\": \"SC\",\r\n      \"district\": \"Rua das Flores\",\r\n      \"street\": \"Avenida Interlagos\",\r\n      \"number\": \"50\",\r\n      \"complement\": \"de 4503 ao fim - lado ímpar\",\r\n      \"country\": \"Brasil\"\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/company",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"company"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
